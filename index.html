@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student Financial Wellness Survey | SiLo.Grp</title>
+    <meta name="description" content="Help us understand student financial needs. A research survey by SiLo.Grp for the Mastersave project.">
+    
+    <!-- Favicon -->
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>📊</text></svg>">
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Styles -->
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <!-- Progress Bar -->
+    <div class="progress-container">
+        <div class="progress-bar" id="progressBar"></div>
+        <span class="progress-text" id="progressText">0%</span>
+    </div>
+
+    <!-- Survey Container -->
+    <div class="survey-container">
+        <!-- Welcome Screen -->
+        <div class="slide active" id="slide-welcome">
+            <div class="slide-content welcome-slide">
+                <div class="logo-container">
+                    <div class="logo">
+                        <span class="logo-silo">SiLo</span><span class="logo-grp">.Grp</span>
+                    </div>
+                    <span class="logo-tagline">Research Division</span>
+                </div>
+                
+                <h1>Student Financial Wellness Survey</h1>
+                <p class="subtitle">Help us understand how MCF scholars manage their stipends</p>
+                
+                <div class="info-box">
+                    <div class="info-item">
+                        <span class="info-icon">⏱️</span>
+                        <span>8-12 minutes</span>
+                    </div>
+                    <div class="info-item">
+                        <span class="info-icon">🔒</span>
+                        <span>Anonymous & Confidential</span>
+                    </div>
+                    <div class="info-item">
+                        <span class="info-icon">🎯</span>
+                        <span>34 Questions</span>
+                    </div>
+                </div>
+                
+                <p class="description">
+                    Your responses will help us build better financial tools for students like you. 
+                    This survey is conducted by <strong>SiLo.Grp</strong> as part of the Mastersave research initiative.
+                </p>
+                
+                <button class="btn btn-primary btn-start" onclick="startSurvey()">
+                    Start Survey
+                    <span class="btn-arrow">→</span>
+                </button>
+                
+                <p class="privacy-note">
+                    By continuing, you agree to participate in this research. Your responses are anonymous 
+                    unless you choose to provide contact information for follow-up.
+                </p>
+            </div>
+        </div>
+
+        <!-- Section Headers will be inserted dynamically -->
+        
+        <!-- Question Slides Container -->
+        <div id="questionsContainer"></div>
+
+        <!-- Thank You Screen -->
+        <div class="slide" id="slide-thankyou">
+            <div class="slide-content thankyou-slide">
+                <div class="success-icon">✓</div>
+                <h1>Thank You!</h1>
+                <p class="subtitle">Your response has been recorded successfully.</p>
+                
+                <div class="thankyou-message">
+                    <p>Your insights are invaluable to our research. Together, we're building financial tools that truly serve African students.</p>
+                </div>
+                
+                <div class="share-section">
+                    <p>Help us reach more students:</p>
+                    <div class="share-buttons">
+                        <button class="btn btn-share whatsapp" onclick="shareWhatsApp()">
+                            <span>📱</span> Share on WhatsApp
+                        </button>
+                        <button class="btn btn-share copy" onclick="copyLink()">
+                            <span>🔗</span> Copy Link
+                        </button>
+                    </div>
+                </div>
+                
+                <div class="logo-footer">
+                    <div class="logo small">
+                        <span class="logo-silo">SiLo</span><span class="logo-grp">.Grp</span>
+                    </div>
+                    <p>Building the future of student finance</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Navigation -->
+    <div class="navigation" id="navigation">
+        <button class="nav-btn btn-back" id="btnBack" onclick="previousSlide()">
+            <span>←</span> Back
+        </button>
+        <div class="nav-spacer"></div>
+        <button class="nav-btn btn-next" id="btnNext" onclick="nextSlide()">
+            Next <span>→</span>
+        </button>
+    </div>
+
+    <!-- Keyboard hint -->
+    <div class="keyboard-hint" id="keyboardHint">
+        Press <kbd>Enter</kbd> to continue
+    </div>
+
+    <!-- Loading Overlay -->
+    <div class="loading-overlay" id="loadingOverlay">
+        <div class="loader"></div>
+        <p>Submitting your response...</p>
+    </div>
+
+    <!-- Toast Notification -->
+    <div class="toast" id="toast"></div>
+
+    <!-- Scripts -->
+    <script src="config.js"></script>
+    <script src="script.js"></script>
+</body>
+</html>
