@@ -13,6 +13,9 @@
     <!-- Lucide Icons -->
     <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
     
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    
     <style>
         :root {
             --primary-blue: #2563EB;
@@ -169,6 +172,21 @@
             min-height: 100vh;
         }
 
+        /* ===== Content Panels ===== */
+        .content-panel {
+            display: none;
+        }
+
+        .content-panel.active {
+            display: block;
+            animation: fadeIn 0.3s ease-out;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
         /* ===== Header ===== */
         .page-header {
             display: flex;
@@ -250,6 +268,11 @@
         .btn-success:hover {
             transform: translateY(-2px);
             box-shadow: 0 6px 20px rgba(16, 185, 129, 0.4);
+        }
+
+        .btn-danger {
+            background: linear-gradient(135deg, var(--error-red) 0%, #F87171 100%);
+            color: var(--white);
         }
 
         /* ===== Stats Cards ===== */
@@ -516,11 +539,16 @@
             align-items: center;
             justify-content: center;
             transition: all var(--transition-fast);
+            margin-right: 4px;
         }
 
         .action-btn:hover {
             background: var(--primary-blue);
             color: var(--white);
+        }
+
+        .action-btn.delete:hover {
+            background: var(--error-red);
         }
 
         .action-btn i {
@@ -563,6 +591,129 @@
             color: var(--gray-500);
             max-width: 400px;
             margin: 0 auto;
+        }
+
+        /* ===== Charts ===== */
+        .charts-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+            gap: 24px;
+            margin-bottom: 32px;
+        }
+
+        .chart-card {
+            background: var(--white);
+            border-radius: var(--radius-lg);
+            padding: 24px;
+            box-shadow: var(--shadow-md);
+            border: 1px solid var(--gray-100);
+        }
+
+        .chart-card h3 {
+            font-size: 16px;
+            font-weight: 700;
+            color: var(--gray-900);
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .chart-card h3 i {
+            width: 20px;
+            height: 20px;
+            color: var(--primary-blue);
+        }
+
+        .chart-container {
+            position: relative;
+            height: 300px;
+        }
+
+        /* ===== Settings ===== */
+        .settings-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 24px;
+        }
+
+        .settings-card {
+            background: var(--white);
+            border-radius: var(--radius-lg);
+            padding: 24px;
+            box-shadow: var(--shadow-md);
+            border: 1px solid var(--gray-100);
+        }
+
+        .settings-card h3 {
+            font-size: 16px;
+            font-weight: 700;
+            color: var(--gray-900);
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .settings-card h3 i {
+            width: 20px;
+            height: 20px;
+            color: var(--primary-blue);
+        }
+
+        .setting-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 16px 0;
+            border-bottom: 1px solid var(--gray-100);
+        }
+
+        .setting-item:last-child {
+            border-bottom: none;
+        }
+
+        .setting-info h4 {
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--gray-800);
+            margin-bottom: 4px;
+        }
+
+        .setting-info p {
+            font-size: 12px;
+            color: var(--gray-500);
+        }
+
+        .toggle-switch {
+            width: 48px;
+            height: 26px;
+            background: var(--gray-300);
+            border-radius: 13px;
+            position: relative;
+            cursor: pointer;
+            transition: background var(--transition-fast);
+        }
+
+        .toggle-switch.active {
+            background: var(--success-green);
+        }
+
+        .toggle-switch::after {
+            content: '';
+            position: absolute;
+            width: 20px;
+            height: 20px;
+            background: var(--white);
+            border-radius: 50%;
+            top: 3px;
+            left: 3px;
+            transition: transform var(--transition-fast);
+            box-shadow: var(--shadow-sm);
+        }
+
+        .toggle-switch.active::after {
+            transform: translateX(22px);
         }
 
         /* ===== Response Modal ===== */
@@ -719,6 +870,29 @@
             animation: spin 1s linear infinite;
         }
 
+        /* ===== Real-time Pulse Animation ===== */
+        .live-indicator {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 12px;
+            font-weight: 600;
+            color: var(--success-green);
+        }
+
+        .live-dot {
+            width: 8px;
+            height: 8px;
+            background: var(--success-green);
+            border-radius: 50%;
+            animation: pulse 2s ease-in-out infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.5; transform: scale(1.2); }
+        }
+
         /* ===== Responsive ===== */
         @media (max-width: 1024px) {
             .sidebar {
@@ -727,6 +901,10 @@
 
             .main-content {
                 margin-left: 0;
+            }
+
+            .charts-grid {
+                grid-template-columns: 1fr;
             }
         }
 
@@ -764,29 +942,10 @@
             .search-box input {
                 width: 100%;
             }
-        }
 
-        /* ===== Real-time Pulse Animation ===== */
-        .live-indicator {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            font-size: 12px;
-            font-weight: 600;
-            color: var(--success-green);
-        }
-
-        .live-dot {
-            width: 8px;
-            height: 8px;
-            background: var(--success-green);
-            border-radius: 50%;
-            animation: pulse 2s ease-in-out infinite;
-        }
-
-        @keyframes pulse {
-            0%, 100% { opacity: 1; transform: scale(1); }
-            50% { opacity: 0.5; transform: scale(1.2); }
+            .settings-grid {
+                grid-template-columns: 1fr;
+            }
         }
     </style>
 </head>
@@ -801,19 +960,19 @@
         </div>
 
         <nav class="sidebar-nav">
-            <a class="nav-item active">
+            <a class="nav-item active" data-panel="dashboard" onclick="AdminApp.switchPanel('dashboard')">
                 <i data-lucide="layout-dashboard"></i>
                 <span>Dashboard</span>
             </a>
-            <a class="nav-item">
+            <a class="nav-item" data-panel="responses" onclick="AdminApp.switchPanel('responses')">
                 <i data-lucide="file-text"></i>
                 <span>Responses</span>
             </a>
-            <a class="nav-item">
+            <a class="nav-item" data-panel="analytics" onclick="AdminApp.switchPanel('analytics')">
                 <i data-lucide="pie-chart"></i>
                 <span>Analytics</span>
             </a>
-            <a class="nav-item">
+            <a class="nav-item" data-panel="settings" onclick="AdminApp.switchPanel('settings')">
                 <i data-lucide="settings"></i>
                 <span>Settings</span>
             </a>
@@ -829,120 +988,315 @@
 
     <!-- Main Content -->
     <main class="main-content">
-        <!-- Header -->
-        <header class="page-header">
-            <div class="page-title">
-                <h1>Survey Dashboard</h1>
-                <p>Monitor and analyze MCF Scholar survey responses</p>
-            </div>
-            <div class="header-actions">
-                <div class="live-indicator">
-                    <div class="live-dot"></div>
-                    <span>Live Updates</span>
+        
+        <!-- ===== DASHBOARD PANEL ===== -->
+        <div class="content-panel active" id="panel-dashboard">
+            <header class="page-header">
+                <div class="page-title">
+                    <h1>Survey Dashboard</h1>
+                    <p>Monitor and analyze MCF Scholar survey responses</p>
                 </div>
-                <button class="btn btn-secondary refresh-btn" id="refreshBtn">
-                    <i data-lucide="refresh-cw"></i>
-                    <span>Refresh</span>
-                </button>
-                <button class="btn btn-success" id="exportBtn">
-                    <i data-lucide="download"></i>
-                    <span>Export CSV</span>
-                </button>
-            </div>
-        </header>
+                <div class="header-actions">
+                    <div class="live-indicator">
+                        <div class="live-dot"></div>
+                        <span>Live Updates</span>
+                    </div>
+                    <button class="btn btn-secondary refresh-btn" id="refreshBtn" onclick="AdminApp.refreshData()">
+                        <i data-lucide="refresh-cw"></i>
+                        <span>Refresh</span>
+                    </button>
+                    <button class="btn btn-success" onclick="AdminApp.exportCSV()">
+                        <i data-lucide="download"></i>
+                        <span>Export CSV</span>
+                    </button>
+                </div>
+            </header>
 
-        <!-- Stats Grid -->
-        <div class="stats-grid">
-            <div class="stat-card">
-                <div class="stat-header">
-                    <div class="stat-icon blue">
-                        <i data-lucide="users"></i>
+            <!-- Stats Grid -->
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-header">
+                        <div class="stat-icon blue">
+                            <i data-lucide="users"></i>
+                        </div>
+                        <div class="stat-trend up">
+                            <i data-lucide="trending-up"></i>
+                            <span>+12%</span>
+                        </div>
                     </div>
-                    <div class="stat-trend up">
-                        <i data-lucide="trending-up"></i>
-                        <span>+12%</span>
-                    </div>
+                    <div class="stat-value" id="totalResponses">0</div>
+                    <div class="stat-label">Total Responses</div>
                 </div>
-                <div class="stat-value" id="totalResponses">0</div>
-                <div class="stat-label">Total Responses</div>
+
+                <div class="stat-card">
+                    <div class="stat-header">
+                        <div class="stat-icon green">
+                            <i data-lucide="check-circle"></i>
+                        </div>
+                        <div class="stat-trend up">
+                            <i data-lucide="trending-up"></i>
+                            <span>+8%</span>
+                        </div>
+                    </div>
+                    <div class="stat-value" id="completionRate">0%</div>
+                    <div class="stat-label">Completion Rate</div>
+                </div>
+
+                <div class="stat-card">
+                    <div class="stat-header">
+                        <div class="stat-icon orange">
+                            <i data-lucide="clock"></i>
+                        </div>
+                    </div>
+                    <div class="stat-value" id="avgTime">0m</div>
+                    <div class="stat-label">Avg. Completion Time</div>
+                </div>
+
+                <div class="stat-card">
+                    <div class="stat-header">
+                        <div class="stat-icon purple">
+                            <i data-lucide="calendar"></i>
+                        </div>
+                    </div>
+                    <div class="stat-value" id="todayResponses">0</div>
+                    <div class="stat-label">Responses Today</div>
+                </div>
             </div>
 
-            <div class="stat-card">
-                <div class="stat-header">
-                    <div class="stat-icon green">
-                        <i data-lucide="check-circle"></i>
+            <!-- Recent Responses Table -->
+            <div class="table-container">
+                <div class="table-header">
+                    <div class="table-title">
+                        <h2>Recent Responses</h2>
+                        <span class="badge" id="responseBadge">0 entries</span>
                     </div>
-                    <div class="stat-trend up">
-                        <i data-lucide="trending-up"></i>
-                        <span>+8%</span>
+                    <div class="table-actions">
+                        <div class="search-box">
+                            <i data-lucide="search"></i>
+                            <input type="text" placeholder="Search responses..." id="searchInput" onkeyup="AdminApp.filterResponses()">
+                        </div>
                     </div>
                 </div>
-                <div class="stat-value" id="completionRate">0%</div>
-                <div class="stat-label">Completion Rate</div>
-            </div>
 
-            <div class="stat-card">
-                <div class="stat-header">
-                    <div class="stat-icon orange">
-                        <i data-lucide="clock"></i>
-                    </div>
+                <div class="table-wrapper">
+                    <table id="responsesTable">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Submitted</th>
+                                <th>Year</th>
+                                <th>Gender</th>
+                                <th>Campus</th>
+                                <th>Savings</th>
+                                <th>Follow-up</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="responsesBody">
+                            <!-- Responses will be populated here -->
+                        </tbody>
+                    </table>
                 </div>
-                <div class="stat-value" id="avgTime">0m</div>
-                <div class="stat-label">Avg. Completion Time</div>
-            </div>
 
-            <div class="stat-card">
-                <div class="stat-header">
-                    <div class="stat-icon purple">
-                        <i data-lucide="calendar"></i>
+                <div class="empty-state" id="emptyState" style="display: none;">
+                    <div class="empty-icon">
+                        <i data-lucide="inbox"></i>
                     </div>
+                    <h3>No responses yet</h3>
+                    <p>Survey responses will appear here in real-time as they are submitted.</p>
                 </div>
-                <div class="stat-value" id="todayResponses">0</div>
-                <div class="stat-label">Responses Today</div>
             </div>
         </div>
 
-        <!-- Data Table -->
-        <div class="table-container">
-            <div class="table-header">
-                <div class="table-title">
-                    <h2>Recent Responses</h2>
-                    <span class="badge" id="responseBadge">0 entries</span>
+        <!-- ===== RESPONSES PANEL ===== -->
+        <div class="content-panel" id="panel-responses">
+            <header class="page-header">
+                <div class="page-title">
+                    <h1>All Responses</h1>
+                    <p>View and manage all survey submissions</p>
                 </div>
-                <div class="table-actions">
-                    <div class="search-box">
-                        <i data-lucide="search"></i>
-                        <input type="text" placeholder="Search responses..." id="searchInput">
+                <div class="header-actions">
+                    <button class="btn btn-secondary" onclick="AdminApp.refreshData()">
+                        <i data-lucide="refresh-cw"></i>
+                        <span>Refresh</span>
+                    </button>
+                    <button class="btn btn-success" onclick="AdminApp.exportCSV()">
+                        <i data-lucide="download"></i>
+                        <span>Export All</span>
+                    </button>
+                </div>
+            </header>
+
+            <div class="table-container">
+                <div class="table-header">
+                    <div class="table-title">
+                        <h2>Complete Response Data</h2>
+                        <span class="badge" id="responseBadge2">0 entries</span>
+                    </div>
+                    <div class="table-actions">
+                        <div class="search-box">
+                            <i data-lucide="search"></i>
+                            <input type="text" placeholder="Search..." id="searchInput2" onkeyup="AdminApp.filterResponses()">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="table-wrapper">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Submitted</th>
+                                <th>Year</th>
+                                <th>Gender</th>
+                                <th>Campus</th>
+                                <th>Income</th>
+                                <th>Savings</th>
+                                <th>Confidence</th>
+                                <th>Follow-up</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="responsesBody2">
+                            <!-- Responses will be populated here -->
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="empty-state" id="emptyState2" style="display: none;">
+                    <div class="empty-icon">
+                        <i data-lucide="inbox"></i>
+                    </div>
+                    <h3>No responses yet</h3>
+                    <p>Survey responses will appear here once students submit their feedback.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- ===== ANALYTICS PANEL ===== -->
+        <div class="content-panel" id="panel-analytics">
+            <header class="page-header">
+                <div class="page-title">
+                    <h1>Analytics</h1>
+                    <p>Visual insights from survey data</p>
+                </div>
+                <div class="header-actions">
+                    <button class="btn btn-secondary" onclick="AdminApp.refreshData()">
+                        <i data-lucide="refresh-cw"></i>
+                        <span>Refresh Charts</span>
+                    </button>
+                </div>
+            </header>
+
+            <div class="charts-grid">
+                <div class="chart-card">
+                    <h3><i data-lucide="graduation-cap"></i> Responses by Year of Study</h3>
+                    <div class="chart-container">
+                        <canvas id="yearChart"></canvas>
+                    </div>
+                </div>
+
+                <div class="chart-card">
+                    <h3><i data-lucide="map-pin"></i> Campus Distribution</h3>
+                    <div class="chart-container">
+                        <canvas id="campusChart"></canvas>
+                    </div>
+                </div>
+
+                <div class="chart-card">
+                    <h3><i data-lucide="piggy-bank"></i> Savings Behavior</h3>
+                    <div class="chart-container">
+                        <canvas id="savingsChart"></canvas>
+                    </div>
+                </div>
+
+                <div class="chart-card">
+                    <h3><i data-lucide="trending-up"></i> Financial Confidence</h3>
+                    <div class="chart-container">
+                        <canvas id="confidenceChart"></canvas>
                     </div>
                 </div>
             </div>
+        </div>
 
-            <div class="table-wrapper">
-                <table id="responsesTable">
-                    <thead>
-                        <tr>
-                            <th>ID</th>
-                            <th>Submitted</th>
-                            <th>Year</th>
-                            <th>Gender</th>
-                            <th>Campus</th>
-                            <th>Savings</th>
-                            <th>Follow-up</th>
-                            <th>Actions</th>
-                        </tr>
-                    </thead>
-                    <tbody id="responsesBody">
-                        <!-- Responses will be populated here -->
-                    </tbody>
-                </table>
-            </div>
-
-            <div class="empty-state" id="emptyState">
-                <div class="empty-icon">
-                    <i data-lucide="inbox"></i>
+        <!-- ===== SETTINGS PANEL ===== -->
+        <div class="content-panel" id="panel-settings">
+            <header class="page-header">
+                <div class="page-title">
+                    <h1>Settings</h1>
+                    <p>Configure dashboard preferences</p>
                 </div>
-                <h3>No responses yet</h3>
-                <p>Survey responses will appear here in real-time as they are submitted.</p>
+            </header>
+
+            <div class="settings-grid">
+                <div class="settings-card">
+                    <h3><i data-lucide="bell"></i> Notifications</h3>
+                    <div class="setting-item">
+                        <div class="setting-info">
+                            <h4>Email Alerts</h4>
+                            <p>Receive email when new responses come in</p>
+                        </div>
+                        <div class="toggle-switch active" onclick="this.classList.toggle('active')"></div>
+                    </div>
+                    <div class="setting-item">
+                        <div class="setting-info">
+                            <h4>Daily Summary</h4>
+                            <p>Get a daily digest of survey activity</p>
+                        </div>
+                        <div class="toggle-switch" onclick="this.classList.toggle('active')"></div>
+                    </div>
+                </div>
+
+                <div class="settings-card">
+                    <h3><i data-lucide="database"></i> Data Management</h3>
+                    <div class="setting-item">
+                        <div class="setting-info">
+                            <h4>Auto-backup</h4>
+                            <p>Automatically backup responses weekly</p>
+                        </div>
+                        <div class="toggle-switch active" onclick="this.classList.toggle('active')"></div>
+                    </div>
+                    <div class="setting-item">
+                        <div class="setting-info">
+                            <h4>Clear All Responses</h4>
+                            <p>Remove all survey data (cannot be undone)</p>
+                        </div>
+                        <button class="btn btn-danger" onclick="AdminApp.clearAllData()">
+                            <i data-lucide="trash-2"></i>
+                            Clear Data
+                        </button>
+                    </div>
+                </div>
+
+                <div class="settings-card">
+                    <h3><i data-lucide="share-2"></i> Survey Link</h3>
+                    <div class="setting-item">
+                        <div class="setting-info">
+                            <h4>Survey URL</h4>
+                            <p>Share this link with students</p>
+                        </div>
+                        <button class="btn btn-primary" onclick="AdminApp.copySurveyLink()">
+                            <i data-lucide="copy"></i>
+                            Copy Link
+                        </button>
+                    </div>
+                </div>
+
+                <div class="settings-card">
+                    <h3><i data-lucide="info"></i> About</h3>
+                    <div class="setting-item">
+                        <div class="setting-info">
+                            <h4>Version</h4>
+                            <p>MCF Survey Admin Dashboard v1.0</p>
+                        </div>
+                    </div>
+                    <div class="setting-item">
+                        <div class="setting-info">
+                            <h4>Support</h4>
+                            <p>Contact: support@silogrp.com</p>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
     </main>
@@ -952,7 +1306,7 @@
         <div class="modal">
             <div class="modal-header">
                 <h2>Response Details</h2>
-                <button class="modal-close" id="modalClose">
+                <button class="modal-close" onclick="AdminApp.closeModal()">
                     <i data-lucide="x"></i>
                 </button>
             </div>
@@ -969,9 +1323,13 @@
         // Initialize Lucide icons
         lucide.createIcons();
 
+        // Chart instances
+        let yearChart, campusChart, savingsChart, confidenceChart;
+
         // Admin Dashboard Application
         const AdminApp = {
             responses: [],
+            currentPanel: 'dashboard',
 
             init() {
                 this.loadResponses();
@@ -979,107 +1337,81 @@
                 this.startAutoRefresh();
             },
 
-            loadResponses() {
-                // Load from window.surveyResponses (shared with survey page)
-                // In production, this would fetch from Supabase
-                this.responses = window.surveyResponses || [];
+            // Switch between panels
+            switchPanel(panelName) {
+                this.currentPanel = panelName;
+
+                // Update nav items
+                document.querySelectorAll('.nav-item').forEach(item => {
+                    item.classList.remove('active');
+                    if (item.dataset.panel === panelName) {
+                        item.classList.add('active');
+                    }
+                });
+
+                // Update panels
+                document.querySelectorAll('.content-panel').forEach(panel => {
+                    panel.classList.remove('active');
+                });
+                document.getElementById('panel-' + panelName).classList.add('active');
+
+                // Refresh data and charts when switching
+                this.loadResponses();
                 
-                // Also try to get from opener window if available
-                if (window.opener && window.opener.surveyResponses) {
-                    this.responses = window.opener.surveyResponses;
+                // Update charts if on analytics panel
+                if (panelName === 'analytics') {
+                    setTimeout(() => this.updateCharts(), 100);
                 }
 
-                // For demo purposes, load sample data if no responses
-                if (this.responses.length === 0) {
-                    this.loadSampleData();
+                lucide.createIcons();
+            },
+
+            loadResponses() {
+                // Load from localStorage (shared with survey page)
+                try {
+                    const stored = localStorage.getItem('mcf_survey_responses');
+                    if (stored) {
+                        this.responses = JSON.parse(stored);
+                    } else {
+                        this.responses = [];
+                    }
+                } catch (e) {
+                    console.error('Error loading responses:', e);
+                    this.responses = [];
                 }
 
                 this.updateStats();
                 this.renderTable();
-            },
-
-            loadSampleData() {
-                // Sample data for demonstration
-                const sampleResponses = [
-                    {
-                        id: 'resp_001',
-                        submitted_at: new Date().toISOString(),
-                        q1_year: 'Year 2',
-                        q2_gender: 'Female',
-                        q3_campus: 'ALU Rwanda (Kigali)',
-                        q4_income: 'No, stipend only',
-                        q5_first_action: 'Mentally divide into categories',
-                        q6_pattern: 'I spend more in the first two weeks, then cut back',
-                        q7_runout: 'Once',
-                        q14_save: 'Occasionally',
-                        q21_confidence: 'Somewhat confident',
-                        q30_challenge: 'Managing unexpected expenses that come up mid-month',
-                        q33_followup: 'Yes',
-                        q34_email: 'student1@alueducation.com'
-                    },
-                    {
-                        id: 'resp_002',
-                        submitted_at: new Date(Date.now() - 3600000).toISOString(),
-                        q1_year: 'Year 3',
-                        q2_gender: 'Male',
-                        q3_campus: 'ALU Mauritius',
-                        q4_income: 'Part-time/Freelance',
-                        q5_first_action: 'Transfer to savings',
-                        q6_pattern: 'I spend roughly the same amount each week',
-                        q7_runout: 'Never',
-                        q14_save: 'Consistently',
-                        q21_confidence: 'Very confident',
-                        q30_challenge: 'Balancing savings goals with daily expenses',
-                        q33_followup: 'No'
-                    },
-                    {
-                        id: 'resp_003',
-                        submitted_at: new Date(Date.now() - 7200000).toISOString(),
-                        q1_year: 'Year 1',
-                        q2_gender: 'Female',
-                        q3_campus: 'ALU Rwanda (Kigali)',
-                        q4_income: 'Family support',
-                        q5_first_action: 'Spend without plan',
-                        q6_pattern: 'My spending is unpredictable',
-                        q7_runout: 'Every month',
-                        q14_save: "Don't save",
-                        q21_confidence: 'Not confident at all',
-                        q30_challenge: 'I always run out of money before month end',
-                        q33_followup: 'Yes',
-                        q34_whatsapp: '+250788123456'
-                    }
-                ];
-
-                this.responses = sampleResponses;
-                window.surveyResponses = sampleResponses;
+                
+                if (this.currentPanel === 'analytics') {
+                    this.updateCharts();
+                }
             },
 
             bindEvents() {
-                document.getElementById('refreshBtn').addEventListener('click', () => this.refreshData());
-                document.getElementById('exportBtn').addEventListener('click', () => this.exportCSV());
-                document.getElementById('searchInput').addEventListener('input', (e) => this.filterResponses(e.target.value));
-                document.getElementById('modalClose').addEventListener('click', () => this.closeModal());
                 document.getElementById('modalOverlay').addEventListener('click', (e) => {
                     if (e.target === e.currentTarget) this.closeModal();
                 });
             },
 
             startAutoRefresh() {
-                // Auto-refresh every 30 seconds
+                // Auto-refresh every 10 seconds
                 setInterval(() => {
                     this.loadResponses();
-                }, 30000);
+                }, 10000);
             },
 
             refreshData() {
                 const btn = document.getElementById('refreshBtn');
-                btn.classList.add('spinning');
+                if (btn) {
+                    btn.classList.add('spinning');
+                    setTimeout(() => {
+                        btn.classList.remove('spinning');
+                    }, 1000);
+                }
                 
-                setTimeout(() => {
-                    this.loadResponses();
-                    btn.classList.remove('spinning');
-                    this.showToast('Data refreshed successfully', 'success');
-                }, 1000);
+                this.loadResponses();
+                this.showToast('Data refreshed successfully', 'success');
             },
 
             updateStats() {
@@ -1092,26 +1424,35 @@
 
                 document.getElementById('totalResponses').textContent = total;
                 document.getElementById('todayResponses').textContent = today;
-                document.getElementById('completionRate').textContent = total > 0 ? '94%' : '0%';
+                document.getElementById('completionRate').textContent = total > 0 ? '100%' : '0%';
                 document.getElementById('avgTime').textContent = total > 0 ? '8m' : '0m';
                 document.getElementById('responseBadge').textContent = `${total} entries`;
+                
+                const badge2 = document.getElementById('responseBadge2');
+                if (badge2) badge2.textContent = `${total} entries`;
             },
 
             renderTable() {
                 const tbody = document.getElementById('responsesBody');
+                const tbody2 = document.getElementById('responsesBody2');
                 const emptyState = document.getElementById('emptyState');
+                const emptyState2 = document.getElementById('emptyState2');
                 const table = document.getElementById('responsesTable');
 
                 if (this.responses.length === 0) {
-                    table.style.display = 'none';
-                    emptyState.style.display = 'block';
+                    if (table) table.style.display = 'none';
+                    if (emptyState) emptyState.style.display = 'block';
+                    if (emptyState2) emptyState2.style.display = 'block';
+                    if (tbody) tbody.innerHTML = '';
+                    if (tbody2) tbody2.innerHTML = '';
                     return;
                 }
 
-                table.style.display = 'table';
-                emptyState.style.display = 'none';
+                if (table) table.style.display = 'table';
+                if (emptyState) emptyState.style.display = 'none';
+                if (emptyState2) emptyState2.style.display = 'none';
 
-                tbody.innerHTML = this.responses.map(response => {
+                const tableHTML = this.responses.slice().reverse().map(response => {
                     const date = new Date(response.submitted_at);
                     const formattedDate = date.toLocaleDateString('en-US', {
                         month: 'short',
@@ -1128,7 +1469,7 @@
 
                     return `
                         <tr>
-                            <td><span class="response-id">${response.id?.substring(0, 12) || 'N/A'}</span></td>
+                            <td><span class="response-id">${(response.id || 'N/A').substring(0, 12)}</span></td>
                             <td>${formattedDate}</td>
                             <td>${response.q1_year || 'N/A'}</td>
                             <td>${response.q2_gender || 'N/A'}</td>
@@ -1139,45 +1480,147 @@
                                 <button class="action-btn" onclick="AdminApp.viewResponse('${response.id}')">
                                     <i data-lucide="eye"></i>
                                 </button>
+                                <button class="action-btn delete" onclick="AdminApp.deleteResponse('${response.id}')">
+                                    <i data-lucide="trash-2"></i>
+                                </button>
                             </td>
                         </tr>
                     `;
                 }).join('');
 
+                if (tbody) tbody.innerHTML = tableHTML;
+                if (tbody2) tbody2.innerHTML = tableHTML;
+
                 lucide.createIcons();
             },
 
-            filterResponses(query) {
-                const filtered = this.responses.filter(r => {
-                    const searchStr = JSON.stringify(r).toLowerCase();
-                    return searchStr.includes(query.toLowerCase());
+            updateCharts() {
+                if (this.responses.length === 0) return;
+
+                const chartOptions = {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'bottom'
+                        }
+                    }
+                };
+
+                // Year Chart
+                const yearCounts = {};
+                this.responses.forEach(r => {
+                    const year = r.q1_year || 'Unknown';
+                    yearCounts[year] = (yearCounts[year] || 0) + 1;
                 });
 
-                const tbody = document.getElementById('responsesBody');
-                if (filtered.length === 0 && query) {
-                    tbody.innerHTML = `
-                        <tr>
-                            <td colspan="8" style="text-align: center; padding: 40px; color: var(--gray-500);">
-                                No responses match your search
-                            </td>
-                        </tr>
-                    `;
-                } else if (query) {
-                    // Re-render with filtered data
-                    const tempResponses = this.responses;
-                    this.responses = filtered;
-                    this.renderTable();
-                    this.responses = tempResponses;
-                } else {
-                    this.renderTable();
+                const yearCtx = document.getElementById('yearChart');
+                if (yearCtx) {
+                    if (yearChart) yearChart.destroy();
+                    yearChart = new Chart(yearCtx, {
+                        type: 'bar',
+                        data: {
+                            labels: Object.keys(yearCounts),
+                            datasets: [{
+                                label: 'Responses',
+                                data: Object.values(yearCounts),
+                                backgroundColor: ['#3B82F6', '#10B981', '#F59E0B', '#EF4444', '#8B5CF6']
+                            }]
+                        },
+                        options: chartOptions
+                    });
                 }
+
+                // Campus Chart
+                const campusCounts = {};
+                this.responses.forEach(r => {
+                    const campus = r.q3_campus?.includes('Rwanda') ? 'Rwanda' :
+                                  r.q3_campus?.includes('Mauritius') ? 'Mauritius' : 'Remote';
+                    campusCounts[campus] = (campusCounts[campus] || 0) + 1;
+                });
+
+                const campusCtx = document.getElementById('campusChart');
+                if (campusCtx) {
+                    if (campusChart) campusChart.destroy();
+                    campusChart = new Chart(campusCtx, {
+                        type: 'doughnut',
+                        data: {
+                            labels: Object.keys(campusCounts),
+                            datasets: [{
+                                data: Object.values(campusCounts),
+                                backgroundColor: ['#3B82F6', '#10B981', '#EF4444']
+                            }]
+                        },
+                        options: chartOptions
+                    });
+                }
+
+                // Savings Chart
+                const savingsCounts = {};
+                this.responses.forEach(r => {
+                    const savings = r.q14_save || 'Unknown';
+                    savingsCounts[savings] = (savingsCounts[savings] || 0) + 1;
+                });
+
+                const savingsCtx = document.getElementById('savingsChart');
+                if (savingsCtx) {
+                    if (savingsChart) savingsChart.destroy();
+                    savingsChart = new Chart(savingsCtx, {
+                        type: 'pie',
+                        data: {
+                            labels: Object.keys(savingsCounts),
+                            datasets: [{
+                                data: Object.values(savingsCounts),
+                                backgroundColor: ['#10B981', '#3B82F6', '#F59E0B', '#EF4444']
+                            }]
+                        },
+                        options: chartOptions
+                    });
+                }
+
+                // Confidence Chart
+                const confidenceCounts = {};
+                this.responses.forEach(r => {
+                    const confidence = r.q21_confidence || 'Unknown';
+                    confidenceCounts[confidence] = (confidenceCounts[confidence] || 0) + 1;
+                });
+
+                const confidenceCtx = document.getElementById('confidenceChart');
+                if (confidenceCtx) {
+                    if (confidenceChart) confidenceChart.destroy();
+                    confidenceChart = new Chart(confidenceCtx, {
+                        type: 'bar',
+                        data: {
+                            labels: Object.keys(confidenceCounts),
+                            datasets: [{
+                                label: 'Responses',
+                                data: Object.values(confidenceCounts),
+                                backgroundColor: '#8B5CF6'
+                            }]
+                        },
+                        options: {
+                            ...chartOptions,
+                            indexAxis: 'y'
+                        }
+                    });
+                }
+            },
+
+            filterResponses() {
+                const query = (document.getElementById('searchInput')?.value || 
+                              document.getElementById('searchInput2')?.value || '').toLowerCase();
+                
+                const rows = document.querySelectorAll('#responsesBody tr, #responsesBody2 tr');
+                rows.forEach(row => {
+                    const text = row.textContent.toLowerCase();
+                    row.style.display = text.includes(query) ? '' : 'none';
+                });
             },
 
             viewResponse(id) {
                 const response = this.responses.find(r => r.id === id);
                 if (!response) return;
 
-                const modalBody = document.getElementById('modalBody');
                 const questionLabels = {
                     q1_year: 'Year of Study',
                     q2_gender: 'Gender',
@@ -1185,12 +1628,13 @@
                     q4_income: 'Additional Income',
                     q5_first_action: 'First Action with Stipend',
                     q6_pattern: 'Spending Pattern',
-                    q7_runout: 'Run Out Frequency (3 months)',
+                    q7_runout: 'Run Out Frequency',
                     q14_save: 'Saving Behavior',
                     q21_confidence: 'Financial Confidence',
-                    q23_appeal: 'App Auto-Split Appeal',
-                    q30_challenge: 'Biggest Financial Challenge',
+                    q23_appeal: 'App Appeal',
+                    q30_challenge: 'Biggest Challenge',
                     q31_feature: 'Ideal Feature',
+                    q32_additional: 'Additional Comments',
                     q33_followup: 'Follow-up Permission',
                     q34_email: 'Email',
                     q34_whatsapp: 'WhatsApp'
@@ -1209,21 +1653,51 @@
 
                 for (const [key, value] of Object.entries(response)) {
                     if (key === 'id' || key === 'submitted_at') continue;
-                    const label = questionLabels[key] || key;
-                    html += `
-                        <div class="response-detail">
-                            <div class="response-detail-label">${label}</div>
-                            <div class="response-detail-value">${value || 'Not answered'}</div>
-                        </div>
-                    `;
+                    const label = questionLabels[key] || key.replace(/_/g, ' ').replace(/q\d+/g, '').trim();
+                    if (value && value.toString().trim()) {
+                        html += `
+                            <div class="response-detail">
+                                <div class="response-detail-label">${label}</div>
+                                <div class="response-detail-value">${value}</div>
+                            </div>
+                        `;
+                    }
                 }
 
-                modalBody.innerHTML = html;
+                document.getElementById('modalBody').innerHTML = html;
                 document.getElementById('modalOverlay').classList.add('active');
             },
 
             closeModal() {
                 document.getElementById('modalOverlay').classList.remove('active');
+            },
+
+            deleteResponse(id) {
+                if (!confirm('Are you sure you want to delete this response?')) return;
+
+                this.responses = this.responses.filter(r => r.id !== id);
+                localStorage.setItem('mcf_survey_responses', JSON.stringify(this.responses));
+                this.loadResponses();
+                this.showToast('Response deleted', 'success');
+            },
+
+            clearAllData() {
+                if (!confirm('Are you sure you want to delete ALL responses? This cannot be undone!')) return;
+                if (!confirm('This is your last chance to cancel. Delete all data?')) return;
+
+                localStorage.removeItem('mcf_survey_responses');
+                this.responses = [];
+                this.loadResponses();
+                this.showToast('All data cleared', 'success');
+            },
+
+            copySurveyLink() {
+                const link = window.location.href.replace('admin.html', 'index.html');
+                navigator.clipboard.writeText(link).then(() => {
+                    this.showToast('Survey link copied to clipboard!', 'success');
+                }).catch(() => {
+                    this.showToast('Failed to copy link', 'error');
+                });
             },
 
             exportCSV() {
@@ -1245,9 +1719,8 @@
                 this.responses.forEach(response => {
                     const row = headers.map(header => {
                         let value = response[header] || '';
-                        // Escape quotes and wrap in quotes if contains comma
                         value = String(value).replace(/"/g, '""');
-                        if (value.includes(',') || value.includes('\n')) {
+                        if (value.includes(',') || value.includes('\n') || value.includes('"')) {
                             value = `"${value}"`;
                         }
                         return value;

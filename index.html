@@ -81,27 +81,30 @@
         }
 
         .background-image {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            opacity: 0.1;
-        }
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-image: url('alu-campus-for-background.jpg');
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+}
 
         .background-overlay {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(180deg, 
-                rgba(255, 255, 255, 0.95) 0%, 
-                rgba(249, 250, 251, 0.9) 50%,
-                rgba(243, 244, 246, 0.95) 100%
-            );
-        }
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(180deg, 
+        rgba(255, 255, 255, 0.75) 0%, 
+        rgba(249, 250, 251, 0.70) 30%,
+        rgba(243, 244, 246, 0.65) 60%,
+        rgba(237, 242, 247, 0.70) 100%
+    );
+}
 
         .floating-shapes {
             position: absolute;
@@ -114,11 +117,11 @@
         }
 
         .shape {
-            position: absolute;
-            border-radius: 50%;
-            opacity: 0.1;
-            animation: float 20s ease-in-out infinite;
-        }
+    position: absolute;
+    border-radius: 50%;
+    opacity: 0.04;
+    animation: float 20s ease-in-out infinite;
+}
 
         .shape-1 {
             width: 400px;
@@ -979,36 +982,6 @@
             text-decoration: underline;
         }
 
-        /* ===== Admin Link ===== */
-        .admin-link {
-            position: fixed;
-            bottom: 20px;
-            right: 20px;
-            padding: 12px 20px;
-            background: var(--gray-800);
-            color: var(--white);
-            border-radius: var(--radius-md);
-            text-decoration: none;
-            font-size: 13px;
-            font-weight: 600;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            box-shadow: var(--shadow-lg);
-            transition: all var(--transition-fast);
-            z-index: 100;
-        }
-
-        .admin-link:hover {
-            background: var(--gray-900);
-            transform: translateY(-2px);
-        }
-
-        .admin-link i {
-            width: 16px;
-            height: 16px;
-        }
-
         /* ===== Responsive Design ===== */
         @media (max-width: 768px) {
             .main-container {
@@ -1057,13 +1030,6 @@
             .percentage-row {
                 grid-template-columns: 1fr;
                 gap: 8px;
-            }
-
-            .admin-link {
-                bottom: 10px;
-                right: 10px;
-                padding: 10px 16px;
-                font-size: 12px;
             }
         }
 
@@ -1206,8 +1172,8 @@
     </div>
     <div class="logo-container">
         <img 
-            src="silogroup-logo.png" 
-            alt="SiLo Group Logo" 
+            src="alu-logo.png" 
+            alt="ALU Group Logo" 
             class="logo"
         >
     </div>
@@ -2991,11 +2957,7 @@
         </footer>
     </div>
 
-    <!-- Admin Link -->
-    <a href="admin.html" class="admin-link" id="adminLink">
-        <i data-lucide="settings"></i>
-        <span>Admin Panel</span>
-    </a>
+    <!-- REMOVED: Admin Link button - students don't need to see this -->
 
     <script>
         // Initialize Lucide icons
@@ -3313,18 +3275,19 @@
                 try {
                     const responses = this.collectResponses();
                     
-                    // Get existing responses from a simple in-memory store (for demo)
-                    // In production, this would be sent to Supabase or another backend
+                    // Save to localStorage so admin dashboard can read it
                     let storedResponses = [];
                     try {
-                        const stored = window.surveyResponses || [];
-                        storedResponses = Array.isArray(stored) ? stored : [];
+                        const stored = localStorage.getItem('mcf_survey_responses');
+                        if (stored) {
+                            storedResponses = JSON.parse(stored);
+                        }
                     } catch (e) {
                         storedResponses = [];
                     }
                     
                     storedResponses.push(responses);
-                    window.surveyResponses = storedResponses;
+                    localStorage.setItem('mcf_survey_responses', JSON.stringify(storedResponses));
 
                     // Simulate network delay
                     await new Promise(resolve => setTimeout(resolve, 1500));
@@ -3371,9 +3334,6 @@
         document.addEventListener('DOMContentLoaded', () => {
             SurveyApp.init();
         });
-
-        // Initialize survey responses storage
-        window.surveyResponses = window.surveyResponses || [];
     </script>
 </body>
 </html>
